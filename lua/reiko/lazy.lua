@@ -25,19 +25,6 @@ require("lazy").setup({ {import ="reiko.plugins"}},{
   },
   change_detection = {
     notify = false,
-  },
-  --Theme & Appearance
-  'ellisonleao/gruvbox.nvim',
-  'NLKNguyen/papercolor-theme', 
-  {'rose-pine/neovim', name = 'rose-pine'},
-  'projekt0n/github-nvim-theme',
-  'sainnhe/sonokai', 
-  'GustavoPrietoP/doom-themes.nvim',
-  'nvim-tree/nvim-web-devicons',
-  'Mofiqul/vscode.nvim',
-  'catppuccin/nvim',
-  --Funtionalities
-  'echasnovski/mini.animate', 
-  'MunifTanjim/nui.nvim', 
+  },   
 })
 
