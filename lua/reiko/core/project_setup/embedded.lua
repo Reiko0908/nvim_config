@@ -1,8 +1,8 @@
--- ---- GENERAL (UN-PREPARED) -------------------------------------------------------------------------------------------------------------
-vim.keymap.set("n", "<leader>um", function()
+-- ---- GENERAL (UN-PREPARED) -----------------------------------------------------------------------------------------------------------------------
+local function upload_and_monitor()
   if vim.g.project_type == "none" then return end
 
-  local project_name, command1, command2, command3, command4, full_cmd, project_path
+  local project_name, command1, command2, command3, command4, command5, full_cmd, project_path
   local drive = "e"
 
   if vim.g.project_type == "pico" then
@@ -15,6 +15,8 @@ vim.keymap.set("n", "<leader>um", function()
     command5 = string.format("putty.exe -serial COM%s -sercfg %s", vim.g.com_number, vim.g.serial_baudrate)
 
     full_cmd = command1.."&"..command2.."&"..command3.."&"..command4.."&&"..command5
+
+    vim.cmd("w | FloatermNew --position=bottomright --autoclose=0 --width=0.3 --height=0.4 "..full_cmd)
   elseif vim.g.project_type == "arduino" then
     project_path = vim.fn.expand("%:p:h")
     command1 = "cd "..project_path
@@ -23,12 +25,20 @@ vim.keymap.set("n", "<leader>um", function()
     command4 = string.format("putty.exe -serial COM%s -sercfg %s", vim.g.com_number, vim.g.serial_baudrate)
 
     full_cmd = command1.."&"..command2.."&"..command3.."&&"..command4
+
+    vim.cmd("w | FloatermNew --position=bottomright --autoclose=0 --width=0.3 --height=0.4 "..full_cmd)
   end
+end
 
-  vim.cmd("w | FloatermNew --position=bottomright --autoclose=0 --width=0.3 --height=0.4 "..full_cmd)
-end, {desc = "[U]pload and [M]onitor outputs"})
-
--- ---- ARDUINO -------------------------------------------------------------------------------------------------------------
+local function monitor_output()
+  local full_cmd
+  if vim.g.project_type == "none" then return
+  elseif vim.g.project_type == "pico" or vim.g.project_type == "arduino" or vim.g.project_type == "esp_idf" then
+    full_cmd = string.format("!putty.exe -serial COM%s -sercfg %s", vim.g.com_number, vim.g.serial_baudrate)
+    vim.cmd("w| "..full_cmd)
+  end
+end 
+-- ---- ARDUINO -------------------------------------------------------------------------------------------------------------------------------------
 local function check_arduino_boards()
   local full_cmd = "arduino-cli board list"
   vim.cmd("w | FloatermNew --position=topright --autoclose=0 --width=0.3 --height=0.4 "..full_cmd)
@@ -82,8 +92,7 @@ local function upload_arduino()
   -- vim.fn.feedkeys(key)
 end
 
-
--- ---- PICO -------------------------------------------------------------------------------------------------------------
+-- ---- PICO ----------------------------------------------------------------------------------------------------------------------------------------
 local function config_pico()
   vim.g.com_number = vim.fn.input "Select port for pico: COM <your number>"
   vim.g.serial_baudrate = vim.fn.input "Your serial baudrate"
@@ -131,8 +140,7 @@ local function upload_pico()
   vim.fn.feedkeys(key)
 end
 
-
--- ---- STM32 --------------------------------------------------------------------------------------------------------------
+-- ---- STM32 ---------------------------------------------------------------------------------------------------------------------------------------
 local function build_stm32()
   local project_path, command1, command2, command3, command4, full_cmd
 
@@ -175,7 +183,7 @@ local function upload_stm32()
   -- vim.fn.feedkeys(key)
 end
 
--- ---- ESPRESSIF IDF --------------------------------------------------------------------------------------------------------------
+-- ---- ESPRESSIF IDF -------------------------------------------------------------------------------------------------------------------------------
 local function create_esp_project(directory)
   local project_name = vim.fn.input "Project name: "
   local esp_chip = vim.fn.input "Select chip: "
@@ -211,7 +219,7 @@ local function create_esp_project(directory)
 
 end
 
-local function run_idf()
+local function run_esp_idf()
   if vim.g.project_type ~= 'esp_idf' then return end
 
   local project_path = vim.fn.expand("%:p:h:h")
@@ -251,9 +259,11 @@ local function upload_esp_idf()
   vim.cmd("FloatermToggle esp_idf")
 end
 
--- -----------------------------------------------------------------------------------------------------------------------
-
+-- --------------------------------------------------------------------------------------------------------------------------------------------------
 return {
+  upload_and_monitor = upload_and_monitor,
+  monitor_output = monitor_output,
+
   config_pico = config_pico,
   compile_pico = compile_pico,
   build_pico = build_pico,
@@ -268,7 +278,7 @@ return {
   build_stm32 = build_stm32,
   upload_stm32 = upload_stm32,
 
-  run_idf = run_idf,
+  run_esp_idf = run_esp_idf,
   build_esp_idf = build_esp_idf,
   upload_esp_idf = upload_esp_idf,
   config_esp_idf = config_esp_idf,

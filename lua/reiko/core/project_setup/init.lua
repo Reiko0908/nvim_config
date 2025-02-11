@@ -50,7 +50,7 @@ end, {desc = "[D]evice [M]anager replica"})
 
 vim.keymap.set("n", "<leader>idf", function()
   if vim.g.project_type ~= "esp_idf" then return end
-  embedded.run_idf()
+  embedded.run_esp_idf()
 end, {desc = "run ESP_[IDF] Terminal"})
 
 vim.keymap.set("n", "<leader>b", function()
@@ -82,13 +82,19 @@ vim.keymap.set("n", "<leader>u", function()
 end, {desc = "[U]pload"})
 
 vim.keymap.set("n", "<leader>m", function()
-  if vim.g.project_type == "pico" or
-    vim.g.project_type == "arduino" or 
-    vim.g.project_type == "esp_idf"
-    then
+  if vim.g.project_type == 'none' then return  
+  elseif vim.g.project_type == 'pico' or vim.g.project_type == 'arduino' or vim.g.project_type == 'esp_idf' then embedded.monitor_output()
+  end
+end, {desc = "[M]onitor outputs"})
 
-      local full_cmd = string.format("!putty.exe -serial COM%s -sercfg %s", vim.g.com_number, vim.g.serial_baudrate)
-      vim.cmd("w | "..full_cmd)
-    end
-  end, {desc = "[M]onitor outputs"})
+vim.keymap.set("n", "<leader>sm", function()
+  if vim.g.project_type == 'none' then return  
+  elseif vim.g.project_type == 'pico' or vim.g.project_type == 'arduino' then embedded.upload_and_monitor()
+  end
+end,{desc = "[S]end and [M]onitor outputs"})
 
+vim.keymap.set("n", "<leader>cb", function()
+  if vim.g.project_type == "none" then return
+  elseif vim.g.project_type == "cpp" then conventional.compile_binary()
+  end
+end, {desc = "[C]ompile [B]inary"})
