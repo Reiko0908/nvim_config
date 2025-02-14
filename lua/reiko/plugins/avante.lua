@@ -9,8 +9,7 @@ return {
       provider = "ollama",
       vendors = {
         ollama = {
-          api_key_name = "",
-          ask = "",
+          api_key_name = "", 
           endpoint = "http://127.0.0.1:11434/api",
           model = "hf.co/bartowski/Qwen2.5.1-Coder-7B-Instruct-GGUF:Q8_0",
           behaviour = {
@@ -134,14 +133,10 @@ return {
             ignore_patterns = { "%.git", "%.worktree", "__pycache__", "node_modules" }, -- ignore files matching these
             negate_patterns = {}, -- negate ignore files matching these.
           },
-          --- @class AvanteFileSelectorConfig
           file_selector = {
-            --- @alias FileSelectorProvider "native" | "fzf" | "mini.pick" | "snacks" | "telescope" | string
-            provider = "native",
-            -- Options override for custom providers
+            provider = "telescope",
             provider_opts = {},
-          },
-          suggestion = {
+          },          suggestion = {
             debounce = 600,
             throttle = 600,
           },
@@ -219,4 +214,3 @@ return {
     },
   }
 }
-
